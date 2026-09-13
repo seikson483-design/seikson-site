@@ -1,0 +1,244 @@
+/* =========================================================
+   SEIKSON — content data
+   ערכו כאן את התוכן של האתר. אין צורך לגעת ב-HTML או ב-CSS.
+   ========================================================= */
+
+/* ---- כישורים ---- */
+const SKILLS = [
+  { icon: "🎮", name: "גיימינג" },
+  { icon: "🎥", name: "יצירת סרטונים" },
+  { icon: "✂️", name: "עריכת סרטונים" },
+  { icon: "📡", name: "שידורים חיים" },
+  { icon: "🖼️", name: "יצירת תמונות ממוזערות" },
+  { icon: "💡", name: "יצירת רעיונות לתוכן" },
+  { icon: "📱", name: "Shorts" },
+  { icon: "👥", name: "בניית קהילה" },
+];
+
+/* ---- הדרך שלי (Timeline) ----
+   isGoal: true מסמן את היעד הסופי (מקבל עיצוב מודגש) */
+const JOURNEY = [
+  { icon: "🚀", title: "התחלת הערוץ", desc: "הצעד הראשון של SEIKSON ביוטיוב." },
+  { icon: "📹", title: "העלאת הסרטונים הראשונים", desc: "הסרטונים הראשונים עולים לאוויר." },
+  { icon: "🔥", title: "סרטונים שהתחילו לקבל הרבה צפיות", desc: "התוכן מתחיל להגיע ליותר אנשים." },
+  { icon: "👥", title: "בניית קהילה", desc: "קהילה אמיתית נבנית סביב הערוץ." },
+  { icon: "🎯", title: "היעד הבא", desc: "ממשיכים לצמוח, וידאו אחרי וידאו." },
+  { icon: "🏆", title: "100,000 מנויים", desc: "היעד הגדול של המסע.", isGoal: true },
+];
+
+/* ---- סרטונים ----
+   שימו לב: הרשימה הזו היא רק "גיבוי" למקרה שהמשיכה האוטומטית מיוטיוב
+   לא מצליחה. בדרך כלל האתר ימשוך לבד את 3 הסרטונים האחרונים מהערוץ שלכם
+   (ראו את הפונקציה fetchLatestVideos למטה) — אין צורך לגעת כאן. */
+const VIDEOS = [
+  {
+    title: "כותרת הסרטון הראשון שלי",
+    thumb: "",
+    url: "https://www.youtube.com/@SEIKSON533",
+  },
+  {
+    title: "כותרת הסרטון השני שלי",
+    thumb: "",
+    url: "https://www.youtube.com/@SEIKSON533",
+  },
+  {
+    title: "כותרת הסרטון השלישי שלי",
+    thumb: "",
+    url: "https://www.youtube.com/@SEIKSON533",
+  },
+];
+
+/* ---- משחקים ----
+   פשוט הוסיפו שורה חדשה כדי להוסיף משחק. */
+const GAMES = [
+  { icon: "🎮", name: "Brawl Stars" },
+  { icon: "🔥", name: "Fortnite" },
+  { icon: "⚽", name: "FIFA" },
+  { icon: "🧱", name: "Roblox" },
+];
+
+/* ---- לייב ----
+   isLive: true/false — קובע אם מציגים "משדר עכשיו" או "אין לייב כרגע".
+   הערכים כאן הם ברירת מחדל שמוצגת עד שהבדיקה האוטומטית מול יוטיוב מסתיימת
+   (ואם היא לא מוגדרת / נכשלת, הם יישארו כמו שהם). */
+const LIVE = {
+  isLive: false,
+  title: "עדיין אין לייב פעיל",
+  desc: "עקבו כדי לא לפספס כשהלייב הבא יתחיל!",
+  url: "https://www.youtube.com/@SEIKSON533",
+};
+
+/* ---- בדיקת לייב אוטומטית מול YouTube ----
+   כדי להפעיל את זה:
+   1. היכנסו ל: https://console.cloud.google.com/apis/credentials
+   2. צרו פרויקט (אם אין), הפעילו את "YouTube Data API v3", וצרו API key.
+   3. חשוב לאבטח את המפתח: ב-API key restrictions בחרו "HTTP referrers"
+      והוסיפו את הדומיין של האתר שלכם (למשל *.github.io/*).
+   4. הדביקו את המפתח כאן במקום המחרוזת הריקה: */
+const YOUTUBE_API_KEY = "AIzaSyDoESNOzEQ7RaGoFAPhH8x6pCav6n6FrDM";
+const YOUTUBE_CHANNEL_ID = "UCC0FczWmAA9Supg0M62D8tQ"; // ה-Channel ID של SEIKSON
+
+/* =========================================================
+   Rendering — אין צורך לגעת מכאן ולמטה
+   ========================================================= */
+
+function renderSkills() {
+  const el = document.getElementById("skills-grid");
+  el.innerHTML = SKILLS.map(s => `
+    <div class="skill-card">
+      <div class="skill-icon">${s.icon}</div>
+      <div class="skill-name">${s.name}</div>
+    </div>
+  `).join("");
+}
+
+function renderTimeline() {
+  const el = document.getElementById("timeline");
+  el.innerHTML = JOURNEY.map(item => `
+    <div class="timeline-item ${item.isGoal ? "is-goal" : ""}">
+      <div class="timeline-dot">${item.icon}</div>
+      <h3 class="timeline-title">${item.title}</h3>
+      <p class="timeline-desc">${item.desc}</p>
+    </div>
+  `).join("");
+}
+
+function renderVideos() {
+  const el = document.getElementById("videos-grid");
+  el.innerHTML = VIDEOS.map(v => `
+    <div class="video-card">
+      ${
+        v.thumb
+          ? `<img class="video-thumb" src="${v.thumb}" alt="${v.title}" loading="lazy">`
+          : `<div class="video-thumb"></div>`
+      }
+      <div class="video-body">
+        <h3 class="video-title">${v.title}</h3>
+        <a class="video-watch" href="${v.url}" target="_blank" rel="noopener">▶ צפייה בסרטון</a>
+      </div>
+    </div>
+  `).join("");
+}
+
+function renderGames() {
+  const el = document.getElementById("games-grid");
+  el.innerHTML = GAMES.map(g => `
+    <div class="game-card">
+      <div class="game-icon">${g.icon}</div>
+      <div class="game-name">${g.name}</div>
+    </div>
+  `).join("");
+}
+
+function renderLive() {
+  const el = document.getElementById("live-card");
+  el.classList.toggle("live-offline", !LIVE.isLive);
+  el.innerHTML = `
+    <div>
+      <span class="live-badge"><span class="live-dot"></span> ${LIVE.isLive ? "משדר עכשיו" : "לא בשידור"}</span>
+      <h3 class="live-title">${LIVE.title}</h3>
+      <p class="live-desc">${LIVE.desc}</p>
+    </div>
+    <a class="btn ${LIVE.isLive ? "btn-primary" : "btn-secondary"}" href="${LIVE.url}" target="_blank" rel="noopener">
+      ${LIVE.isLive ? "לצפייה בלייב" : "לערוץ שלי"}
+    </a>
+  `;
+}
+
+/* בודקת מול YouTube אם יש שידור חי כרגע, ומעדכנת את LIVE בהתאם.
+   אם אין API key מוגדר, או שהבקשה נכשלת, האתר פשוט ממשיך עם הערכים
+   הידניים שמוגדרים למעלה — האתר לעולם לא "נשבר" בגלל זה. */
+async function checkYouTubeLive() {
+  if (!YOUTUBE_API_KEY) return;
+
+  try {
+    const searchUrl =
+      `https://www.googleapis.com/youtube/v3/search?part=snippet` +
+      `&channelId=${YOUTUBE_CHANNEL_ID}&eventType=live&type=video` +
+      `&key=${YOUTUBE_API_KEY}`;
+
+    const res = await fetch(searchUrl);
+    if (!res.ok) return;
+    const data = await res.json();
+    const liveVideo = data.items && data.items[0];
+
+    if (liveVideo) {
+      LIVE.isLive = true;
+      LIVE.title = liveVideo.snippet.title;
+      LIVE.desc = "השידור פעיל עכשיו — לחצו לצפייה!";
+      LIVE.url = `https://www.youtube.com/watch?v=${liveVideo.id.videoId}`;
+    } else {
+      LIVE.isLive = false;
+      LIVE.title = "עדיין אין לייב פעיל";
+      LIVE.desc = "עקבו כדי לא לפספס כשהלייב הבא יתחיל!";
+      LIVE.url = "https://www.youtube.com/@SEIKSON533";
+    }
+    renderLive();
+  } catch (err) {
+    // שקט לחלוטין — אם הבדיקה נכשלת, פשוט נשארים עם המצב הידני.
+    console.warn("בדיקת לייב אוטומטית נכשלה:", err);
+  }
+}
+
+/* מושכת אוטומטית את 3 הסרטונים האחרונים מהערוץ ומחליפה את VIDEOS.
+   אם אין API key, או שהבקשה נכשלת, האתר פשוט ממשיך עם הדוגמאות
+   שמוגדרות למעלה — האתר לעולם לא "נשבר" בגלל זה. */
+async function fetchLatestVideos() {
+  if (!YOUTUBE_API_KEY) return;
+
+  try {
+    // שלב 1: מציאת פלייליסט ה"העלאות" של הערוץ (עולה 1 יחידת מכסה)
+    const channelUrl =
+      `https://www.googleapis.com/youtube/v3/channels?part=contentDetails` +
+      `&id=${YOUTUBE_CHANNEL_ID}&key=${YOUTUBE_API_KEY}`;
+    const channelRes = await fetch(channelUrl);
+    if (!channelRes.ok) return;
+    const channelData = await channelRes.json();
+    const uploadsId =
+      channelData.items &&
+      channelData.items[0] &&
+      channelData.items[0].contentDetails.relatedPlaylists.uploads;
+    if (!uploadsId) return;
+
+    // שלב 2: שליפת 3 הסרטונים האחרונים מתוך הפלייליסט (עולה 1 יחידת מכסה)
+    const playlistUrl =
+      `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet` +
+      `&playlistId=${uploadsId}&maxResults=3&key=${YOUTUBE_API_KEY}`;
+    const playlistRes = await fetch(playlistUrl);
+    if (!playlistRes.ok) return;
+    const playlistData = await playlistRes.json();
+    const items = playlistData.items;
+    if (!items || !items.length) return;
+
+    const freshVideos = items.map(item => {
+      const snippet = item.snippet;
+      const videoId = snippet.resourceId.videoId;
+      const thumb =
+        (snippet.thumbnails.high && snippet.thumbnails.high.url) ||
+        (snippet.thumbnails.default && snippet.thumbnails.default.url) ||
+        "";
+      return {
+        title: snippet.title,
+        thumb,
+        url: `https://www.youtube.com/watch?v=${videoId}`,
+      };
+    });
+
+    VIDEOS.length = 0;
+    VIDEOS.push(...freshVideos);
+    renderVideos();
+  } catch (err) {
+    // שקט לחלוטין — אם המשיכה נכשלת, פשוט נשארים עם הדוגמאות הידניות.
+    console.warn("משיכת סרטונים אוטומטית נכשלה:", err);
+  }
+}
+
+renderSkills();
+renderTimeline();
+renderVideos();
+renderGames();
+renderLive();
+checkYouTubeLive();
+fetchLatestVideos();
+
+document.getElementById("year").textContent = new Date().getFullYear();
